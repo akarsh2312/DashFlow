@@ -71,6 +71,7 @@ Before running the project, make sure you have the following installed:
    ```
    http://localhost:5173
    ```
+5. Enter any dummy email id and password to login.
 
 ## Development
 
