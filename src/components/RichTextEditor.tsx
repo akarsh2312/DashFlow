@@ -1,12 +1,25 @@
 import React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Box, Button, HStack, Text } from '@chakra-ui/react';
-import { Bold, Italic, Underline, List } from 'lucide-react';
+import Underline from '@tiptap/extension-underline';
+import BulletList from '@tiptap/extension-bullet-list';
+import ListItem from '@tiptap/extension-list-item';
+import { Box, Button, HStack } from '@chakra-ui/react';
+import { Bold, Italic, Underline as UnderlineIcon, List } from 'lucide-react';
 
 const RichTextEditor = ({ content, onChange }: { content: string; onChange: (html: string) => void }) => {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit.configure({
+        bulletList: false, // Disable the built-in bulletList to use our custom configuration
+      }),
+      Underline,
+      BulletList.configure({
+        keepMarks: true,
+        keepAttributes: false,
+      }),
+      ListItem,
+    ],
     content,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
@@ -22,29 +35,29 @@ const RichTextEditor = ({ content, onChange }: { content: string; onChange: (htm
       <HStack spacing={2} mb={4}>
         <Button
           size="sm"
+          colorScheme={editor.isActive('bold') ? 'blue' : 'gray'}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive('bold')}
         >
           <Bold size={16} />
         </Button>
         <Button
           size="sm"
+          colorScheme={editor.isActive('italic') ? 'blue' : 'gray'}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          isActive={editor.isActive('italic')}
         >
           <Italic size={16} />
         </Button>
         <Button
           size="sm"
+          colorScheme={editor.isActive('underline') ? 'blue' : 'gray'}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          isActive={editor.isActive('underline')}
         >
-          <Underline size={16} />
+          <UnderlineIcon size={16} />
         </Button>
         <Button
           size="sm"
+          colorScheme={editor.isActive('bulletList') ? 'blue' : 'gray'}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          isActive={editor.isActive('bulletList')}
         >
           <List size={16} />
         </Button>
@@ -55,6 +68,17 @@ const RichTextEditor = ({ content, onChange }: { content: string; onChange: (htm
         borderRadius="md"
         p={2}
         minH="200px"
+        className="prose max-w-none"
+        sx={{
+          '& ul': {
+            listStyleType: 'disc',
+            paddingLeft: '1.5rem',
+            marginY: '0.5rem',
+          },
+          '& li': {
+            marginY: '0.25rem',
+          },
+        }}
       >
         <EditorContent editor={editor} />
       </Box>
@@ -62,4 +86,4 @@ const RichTextEditor = ({ content, onChange }: { content: string; onChange: (htm
   );
 };
 
-export default RichTextEditor
+export default RichTextEditor;
